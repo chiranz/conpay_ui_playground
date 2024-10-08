@@ -15,16 +15,17 @@ export function useUserStats(walletAddress: string | undefined) {
       }
 
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/escrows?account=${walletAddress}`);
+        // Use relative URL and add a timestamp to prevent caching
+        const response = await fetch(`/api/escrows?account=${walletAddress}&_=${Date.now()}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch escrows");
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
         const escrows: Escrow[] = await response.json();
         const stats = calculateUserStats(escrows);
         setUserStats(stats);
       } catch (error) {
         console.error("Error fetching user stats:", error);
-        setError("Failed to fetch user stats");
+        setError("Failed to fetch user stats. Please try again later.");
       } finally {
         setIsLoading(false);
       }

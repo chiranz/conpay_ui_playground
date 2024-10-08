@@ -3,8 +3,8 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Shield, CheckCircle, AlertCircle, Clock } from "lucide-react";
-import { Escrow, UserStats } from "@/types/escrow";
+import { Shield, CheckCircle, AlertCircle, Clock, RefreshCw } from "lucide-react";
+import { UserStats } from "@/types/escrow";
 import { useUserStats } from "@/hooks/useUserStats";
 
 const MAX_TRUST_SCORE = 100;
@@ -16,12 +16,26 @@ export default function UserProfilePage() {
   const { userStats, isLoading, error } = useUserStats(walletAddress);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-64 text-primary">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64 text-primary">
+        <RefreshCw className="mr-2 animate-spin" />
+        Loading...
+      </div>
+    );
   }
 
   if (error || !walletAddress) {
     return (
-      <div className="flex items-center justify-center h-64 text-primary">{error || "Invalid wallet address"}</div>
+      <div className="flex flex-col items-center justify-center h-64 text-primary">
+        <AlertCircle className="w-12 h-12 mb-4 text-red-500" />
+        <p className="mb-2 text-xl font-semibold">{error || "Invalid wallet address"}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 mt-4 text-white transition-colors bg-blue-500 rounded hover:bg-blue-600"
+        >
+          Retry
+        </button>
+      </div>
     );
   }
 
